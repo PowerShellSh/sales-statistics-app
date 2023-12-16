@@ -14,8 +14,8 @@ from .views import (
 
 
 urlpatterns = [
-    path('login/', LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    # path('login/', LoginView.as_view(template_name='login.html'), name='login'),
+    # path('logout/', LogoutView.as_view(), name='logout'),
     path('fruit/', FruitListView.as_view(), name='fruit'),
     path('fruit/<int:pk>/edit_fruit/',
          EditFruitView.as_view(), name='edit_fruit'),
