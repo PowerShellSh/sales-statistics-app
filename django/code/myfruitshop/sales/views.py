@@ -5,7 +5,6 @@ from collections import defaultdict
 import csv
 import logging
 from io import TextIOWrapper
-from dateutil.relativedelta import relativedelta
 
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render, redirect
@@ -262,7 +261,7 @@ class SalesAggregateView(View):
 
         # 期間の開始日を計算
         start_date: timezone.datetime = (
-            timezone.now() - relativedelta(months=3)
+            timezone.now() - timedelta(days=3*30)
             if is_monthly
             else timezone.now() - timedelta(days=3)
         )
