@@ -216,7 +216,7 @@ class EditSaleView(LoginRequiredMixin, View):
             fruit_name: str = form.cleaned_data.get('fruit')
             quantity: int = form.cleaned_data.get('quantity')
             try:
-                fruit: models.Model = Fruit.objects.get(name=fruit_name)
+                fruit: models.Model = Fruit.objects.get(name__iexact=fruit_name)
             except Fruit.DoesNotExist:
                 form.add_error('fruit', '選択した果物は存在しません。')
                 return render(request, self.template_name, {'form': form})
