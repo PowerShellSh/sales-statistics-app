@@ -63,7 +63,7 @@
 1. このリポジトリをクローンします：
 
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/PowerShellSh/django-sales-statistics-app.git
    cd myfruitshop
 
 ### 1. django project作成
