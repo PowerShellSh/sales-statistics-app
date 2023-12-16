@@ -1,32 +1,31 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from .models import Sale, Fruit
-
+from typing import Dict, Any, Union
 
 class FruitForm(forms.ModelForm):
     class Meta:
         model = Fruit
         fields = ['name', 'price']
 
-    def clean_price(self):
+    def clean_price(self) -> float:
         price = self.cleaned_data.get('price')
         if price is not None and price <= 0:
             raise forms.ValidationError("単価は正の数で入力してください。")
         return price
 
-    def non_field_errors(self):
+    def non_field_errors(self) -> list[str]:
         errors = super().non_field_errors()
-        if self.errors.get('__all__'):
-            # '__all__' キーが存在する場合、つまり non-field エラーがある場合
+        if '__all__' in self.errors:
             errors.extend(self.errors['__all__'])
         return errors
-
 
 class SaleAddForm(forms.ModelForm):
     class Meta:
         model = Sale
         fields = ['fruit', 'quantity', 'sale_date']
 
-    def clean(self):
+    def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
         fruit = cleaned_data.get('fruit')
         quantity = cleaned_data.get('quantity')
@@ -36,7 +35,6 @@ class SaleAddForm(forms.ModelForm):
 
         return cleaned_data
 
-
 class SaleCombinedForm(forms.ModelForm):
     total_amount = forms.DecimalField()
 
@@ -44,7 +42,7 @@ class SaleCombinedForm(forms.ModelForm):
         model = Sale
         fields = ['fruit', 'quantity', 'total_amount', 'sale_date']
 
-    def clean(self):
+    def clean(self) -> Dict[str, Union[str, int, float]]:
         cleaned_data = super().clean()
         fruit = cleaned_data.get('fruit')
         quantity = cleaned_data.get('quantity')
@@ -61,17 +59,15 @@ class SaleCombinedForm(forms.ModelForm):
 
         return cleaned_data
 
-
 class BulkSaleForm(forms.Form):
     csv_file = forms.FileField()
-
 
 class SaleEditForm(forms.ModelForm):
     class Meta:
         model = Sale
         fields = ['fruit', 'quantity', 'sale_date']
 
-    def clean(self):
+    def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
         fruit = cleaned_data.get('fruit')
         quantity = cleaned_data.get('quantity')

@@ -1,9 +1,10 @@
-from django.shortcuts import redirect
+from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
-from sales.models import Fruit
+from django.views import View
+from django.http import HttpRequest, HttpResponse
 
-class TopPageView(LoginRequiredMixin, ListView):
-    template_name = 'top.html'
-    context_object_name = 'fruits'
-    model = Fruit
+class TopPageView(LoginRequiredMixin, View):
+    template_name: str = 'top.html'
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        return render(request, self.template_name)
