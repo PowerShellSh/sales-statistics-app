@@ -131,6 +131,10 @@ class SaleCombinedView(LoginRequiredMixin, View):
                 request.FILES['csv_file'].file, encoding='utf-8')
             reader: csv.reader = csv.reader(csv_file)
             for row in reader:
+                if len(row) != 4:
+                    # 期待される数の値が含まれていない場合の処理
+                    continue
+
                 fruit_name, quantity, total_amount, sale_date = row
 
                 try:
