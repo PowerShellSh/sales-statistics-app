@@ -1,5 +1,5 @@
 from decimal import Decimal
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone as dt_timezone
 from typing import List, Tuple, Dict, Any, Union
 from collections import defaultdict
 import csv
@@ -215,7 +215,8 @@ class EditSaleView(LoginRequiredMixin, View):
             fruit_name: str = form.cleaned_data.get('fruit')
             quantity: int = form.cleaned_data.get('quantity')
             try:
-                fruit: models.Model = Fruit.objects.get(name__iexact=fruit_name)
+                fruit: models.Model = Fruit.objects.get(
+                    name__iexact=fruit_name)
             except Fruit.DoesNotExist:
                 form.add_error('fruit', '選択した果物は存在しません。')
                 return render(request, self.template_name, {'form': form})
@@ -249,8 +250,25 @@ class DeleteSaleView(LoginRequiredMixin, DeleteView):
         return self.delete(request, *args, **kwargs)
 
 
-class SalesAggregateView(View):
+class SalesAggregateView(LoginRequiredMixin, View):
+    login_url: str = LOGIN_URL
     template_name: str = 'sales_aggregate.html'
+
+    def __init__(self, *args, **kwargs):
+
+        # 現在時刻を取得
+        current_time = datetime.now(timezone.utc)
+        # 日本時間に変換
+        current_time_jp = current_time.astimezone(
+            dt_timezone(timedelta(hours=9)))
+        self.end_of_day = datetime(current_time_jp.year, current_time_jp.month,
+                                   current_time_jp.day, 23, 59, 59, 0, tzinfo=dt_timezone(timedelta(hours=9)))
+        # 月次集計の開始日（当日を含めた3ヶ月）
+        self.start_date_monthly = datetime(
+            current_time_jp.year, current_time_jp.month - 2, 1, 0, 0, 0, tzinfo=dt_timezone(timedelta(hours=9)))
+        # 日次集計の開始日（当日を含めた3日）
+        self.start_date_daily = datetime(current_time_jp.year, current_time_jp.month,
+                                         current_time_jp.day - 2, 0, 0, 0, tzinfo=dt_timezone(timedelta(hours=9)))
 
     def format_data(
         self, sales_data: List[models.Model], is_monthly: bool = True
@@ -259,16 +277,16 @@ class SalesAggregateView(View):
             lambda: {'total': 0, 'details': {}}
         )
 
-        # 期間の開始日を計算
-        start_date: timezone.datetime = (
-            timezone.now() - timedelta(days=3*30)
-            if is_monthly
-            else timezone.now() - timedelta(days=3)
-        )
+        if is_monthly:
+            # 月次集計の開始日（当月を含めた三ヶ月）
+            start_date = self.start_date_monthly
+        else:
+            # 日次集計の開始日（当日を含めた3日）
+            start_date = self.start_date_daily
 
         for sale in sales_data:
             # 指定された期間内のデータのみ処理
-            if start_date <= sale.sale_date <= timezone.now() and sale.is_active:
+            if start_date <= sale.sale_date <= self.end_of_day and sale.is_active:
                 key: Tuple[Any, ...] = (
                     sale.sale_date.year,
                     sale.sale_date.month
@@ -306,7 +324,7 @@ class SalesAggregateView(View):
             formatted_data.items(), key=lambda x: x[0]
         )
 
-        # 一番古いデータを削除
+        # 一番古いデータを削除(4ヶ月前 OR 4日前のデータ)
         if sorted_data and len(sorted_data) > 3:
             oldest_data: Tuple[Any, ...] = sorted_data[0]
             del formatted_data[oldest_data[0]]
@@ -321,17 +339,19 @@ class SalesAggregateView(View):
         total_sales: Decimal = sum(
             sale.total_amount for sale in all_sales if sale.is_active
         )
+        # UTC+9:00のオフセットを取得
+        jst_offset = timedelta(hours=9)
+
+        # monthly_sales_data の各要素の sale_date を日本時間に変換
+        for sale in all_sales:
+            sale.sale_date = sale.sale_date + jst_offset
 
         # 月別集計
-        today: timezone.datetime = timezone.now()
-        # タイムゾーンを考慮して期間を指定
-        start_date: timezone.datetime = today - timedelta(days=90)
-
         # Filter sales data for the specified conditions
         monthly_sales_data: List[models.Model] = [
             sale
             for sale in all_sales
-            if start_date <= sale.sale_date <= today and sale.is_active
+            if self.start_date_monthly <= sale.sale_date <= self.end_of_day and sale.is_active
         ]
         monthly_data: List[Tuple[Tuple[Any, ...], Dict[str, Union[int, List[Dict[str, Union[str, Decimal, int]]]]]]] = self.format_data(
             monthly_sales_data
@@ -344,7 +364,7 @@ class SalesAggregateView(View):
         daily_sales_data: List[models.Model] = [
             sale
             for sale in all_sales
-            if today - timedelta(days=3) <= sale.sale_date <= today and sale.is_active
+            if self.start_date_daily <= sale.sale_date <= self.end_of_day and sale.is_active
         ]
         daily_data: List[Tuple[Tuple[Any, ...], Dict[str, Union[int, List[Dict[str, Union[str, Decimal, int]]]]]]] = self.format_data(
             daily_sales_data, is_monthly=False
