@@ -109,5 +109,5 @@ docker-compose up app -d
 - Django アプリケーションはポート 80 で実行されるように設定されています。
 - MySQL はポート 3306 で実行されるように設定されています。
 - ログイン情報は以下です
-  user: root
-  pass: password
+  - - user: root
+  - - pass: password
