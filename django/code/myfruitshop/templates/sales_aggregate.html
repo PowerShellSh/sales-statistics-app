@@ -3,7 +3,7 @@
 {% load custom_filters %}
 
 {% block content %}
-
+<h2 class="mt-5">販売統計情報</h2>
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item">
@@ -14,17 +14,14 @@
 </nav>
 
     <div class="container">
-        <h2 class="mt-5">販売統計情報</h2>
-
         <h3 class="mt-4">累計</h3>
-        <p>{{ total_sales }} 円</p>
-
-        <h3 class="mt-4">月別売上</h3>
+        <p><font size="5" >{{ total_sales }} 円</font></p>
+        <h3 class="mt-4">月別</h3>
         <div class="table-responsive mt-4">
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>月別</th>
+                  <th>月</th>
                   <th>売り上げ</th>
                   <th>内訳</th>
                 </tr>
@@ -41,12 +38,12 @@
             </table>
             <div>
 
-        <h3 class="mt-4">日別売上</h3>
+        <h3 class="mt-4">日別</h3>
         <div class="table-responsive mt-4">
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>日別</th>
+                  <th>日</th>
                   <th>売り上げ</th>
                   <th>内訳</th>
                 </tr>

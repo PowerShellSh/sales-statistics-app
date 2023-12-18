@@ -16,7 +16,7 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>名称</th>
+            <th>果物</th>
             <th>個数</th>
             <th>売り上げ</th>
             <th>販売日時</th>
@@ -67,7 +67,7 @@
     {% endif %}
 
     <div class="mt-4">
-      <a class="btn btn-outline-primary mb-3 float-right" href="{% url 'add_sales' %}">新規追加</a>
+      <a class="btn btn-outline-primary mb-3 float-right" href="{% url 'add_sales' %}">販売情報登録</a>
     </div>
 
     <form method="post" action="{% url 'sales_combined' %}" enctype="multipart/form-data" style="display: flex; align-items: flex-end;">

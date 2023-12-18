@@ -6,10 +6,10 @@ register = template.Library()
 def format_md_tuple(md_tuple):
     if isinstance(md_tuple, tuple) and len(md_tuple) == 2:
         year, month = md_tuple
-        return f"{year}年 {month}月"
+        return f"{year}/{month}"
     else:
         year, month, day = md_tuple
-        return f"{year}年 {month}月 {day}日"
+        return f"{year}/{month}/{day}"
 
 @register.filter(name='format_sales_data')
 def format_sales_data(sales_data):

@@ -20,7 +20,6 @@ from .forms import SaleCombinedForm, SaleAddForm, FruitForm, BulkSaleForm, SaleE
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-LOGIN_URL = '/login/'
 
 
 class FruitListView(LoginRequiredMixin, ListView):
@@ -32,7 +31,6 @@ class FruitListView(LoginRequiredMixin, ListView):
 
 
 class DeleteFruitView(LoginRequiredMixin, DeleteView):
-    login_url: str = LOGIN_URL
     model: models.Model = Fruit
     success_url: str = reverse_lazy('fruit')
     template_name: str = 'fruit_confirm_delete.html'
@@ -50,7 +48,6 @@ class DeleteFruitView(LoginRequiredMixin, DeleteView):
 
 
 class EditFruitView(LoginRequiredMixin, UpdateView):
-    login_url: str = LOGIN_URL
     model: models.Model = Fruit
     template_name: str = 'edit_fruit.html'
     form_class: models.Model = FruitForm
@@ -73,7 +70,6 @@ class EditFruitView(LoginRequiredMixin, UpdateView):
 
 
 class AddFruitView(LoginRequiredMixin, View):
-    login_url: str = LOGIN_URL
     template_name: str = 'add_fruit.html'
 
     def get(self, request) -> render:
@@ -105,7 +101,6 @@ class AddFruitView(LoginRequiredMixin, View):
 
 
 class SaleCombinedView(LoginRequiredMixin, View):
-    login_url: str = LOGIN_URL
     template_name: str = 'sales_list_combined.html'
     paginate_by: int = 10  # ページあたりのアイテム数
 
@@ -165,7 +160,6 @@ class SaleCombinedView(LoginRequiredMixin, View):
 
 
 class AddSaleView(LoginRequiredMixin, View):
-    login_url: str = LOGIN_URL
     template_name: str = 'add_sales.html'
 
     def get(self, request) -> render:
@@ -202,7 +196,6 @@ class AddSaleView(LoginRequiredMixin, View):
 
 
 class EditSaleView(LoginRequiredMixin, View):
-    login_url: str = LOGIN_URL
     template_name: str = 'edit_sales.html'
 
     def get(self, request, pk) -> render:
@@ -237,7 +230,6 @@ class EditSaleView(LoginRequiredMixin, View):
 
 
 class DeleteSaleView(LoginRequiredMixin, DeleteView):
-    login_url: str = LOGIN_URL
     model: models.Model = Sale
     success_url: str = reverse_lazy('sales_combined')
     template_name: str = 'sale_confirm_delete.html'
@@ -255,7 +247,6 @@ class DeleteSaleView(LoginRequiredMixin, DeleteView):
 
 
 class SalesAggregateView(LoginRequiredMixin, View):
-    login_url: str = LOGIN_URL
     template_name: str = 'sales_aggregate.html'
 
     def __init__(self, *args, **kwargs):
