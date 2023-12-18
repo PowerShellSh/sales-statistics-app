@@ -92,8 +92,6 @@ class SaleCombinedViewTest(TestCase):
         response: Any = SaleCombinedView.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
-    # 他のテストケースも同様に追加
-
 
 class AddSaleViewTest(TestCase):
     def setUp(self) -> None:
@@ -164,8 +162,6 @@ class DeleteSaleViewTest(TestCase):
 
         response: Any = DeleteSaleView.as_view()(request, pk=sale.pk)
         self.assertEqual(response.status_code, 302)
-
-    # 他のテストケースも同様に追加
 
 
 class SalesAggregateViewTest(TestCase):
