@@ -111,6 +111,7 @@ root@XXXXXXX:/code# python myfruitshop/manage.py runserver
 ウェブブラウザで http://localhost:80 にアクセスします。
 ### 5.runserver後、うまく接続できない場合
 
+解決方法その１
 `Ctrl+C` でサーバーを停止し、次に以下のコマンドで再起動します：
 
 ```sh
@@ -119,6 +120,10 @@ docker-compose up -d
 docker-compose exec app bash
 root@XXXXXXX:/code# python myfruitshop/manage.py runserver
 ```
+
+解決方法その２
+どのPythonファイルでもいいので空白を入れて一度保存してみてください。
+自動読み込み機能で動作することがあります。
 
 ## その他 バックグランド起動方法
 
