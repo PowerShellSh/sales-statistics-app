@@ -25,12 +25,21 @@ class SaleAddForm(forms.ModelForm):
         model = Sale
         fields = ['fruit', 'quantity', 'sale_date']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # クエリセットをis_active=Trueにフィルタリング
+        self.fields['fruit'].queryset = Fruit.objects.filter(is_active=True)
+
     def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
         fruit = cleaned_data.get('fruit')
         quantity = cleaned_data.get('quantity')
 
-        if not Fruit.objects.filter(name=fruit).exists():
+        # Fruitが存在するか確認
+        try:
+            fruit_instance = Fruit.objects.get(name=fruit)
+        except Fruit.DoesNotExist:
             raise forms.ValidationError('Selected fruit does not exist.')
 
         return cleaned_data

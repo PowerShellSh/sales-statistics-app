@@ -133,7 +133,7 @@ class SaleCombinedView(LoginRequiredMixin, View):
                 fruit_name, quantity, total_amount, sale_date = row
 
                 try:
-                    fruit: models.Model = Fruit.objects.get(name=fruit_name)
+                    fruit: models.Model = Fruit.objects.filter(name=fruit_name, is_active=True).get()
                 except Fruit.DoesNotExist:
                     continue
 
