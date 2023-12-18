@@ -1,56 +1,5 @@
 # MyFruitShop ウェブアプリケーション
 
-## プロジェクトの構造
-├── django
-│ ├── Dockerfile
-│ └── code
-│ ├── myfruitshop
-│ │ ├── init.py
-│ │ ├── debug.log
-│ │ ├── fake.py
-│ │ ├── fruit
-│ │ │ ├── init.py
-│ │ │ ├── admin.py
-│ │ │ ├── apps.py
-│ │ │ ├── migrations
-│ │ │ ├── models.py
-│ │ │ ├── tests.py
-│ │ │ ├── urls.py
-│ │ │ └── views.py
-│ │ ├── manage.py
-│ │ ├── myfruitshop
-│ │ │ ├── init.py
-│ │ │ ├── asgi.py
-│ │ │ ├── settings.py
-│ │ │ ├── urls.py
-│ │ │ └── wsgi.py
-│ │ ├── sales
-│ │ │ ├── admin.py
-│ │ │ ├── apps.py
-│ │ │ ├── forms.py
-│ │ │ ├── migrations
-│ │ │ ├── models.py
-│ │ │ ├── urls.py
-│ │ │ └── views.py
-│ │ ├── static
-│ │ │ └── images
-│ │ │ └── background.jpg
-│ │ ├── templates
-│ │ │ ├── add_fruit.html
-│ │ │ └── ...
-│ │ ├── templatetags
-│ │ │ └── custom_filters.py
-│ │ └── tests
-│ │ └── ...
-│ └── requirements.txt
-├── mysql
-│ ├── Dockerfile
-│ └── data
-│ ├── #ib_16384_0.dblwr
-│ └── ...
-├── docker-compose.yml
-└── Readme.md
-
 ## 必要なもの
 
 アプリケーションを実行する前に、以下がインストールされていることを確認してください：
@@ -151,7 +100,14 @@ docker-compose up app -d
 
 - 可読性向上のため、できる限り型ヒントを意識して実装しました。
 
+- 統計情報の集計の際、日付の計算で外部ライブラリに頼れない中実装する大変さを味わいました。
+
+- 背景にはフルーツっぽさを一面に出したかったのですが、鬱陶しかったらすみません。
+
 以上の点において、コードの品質や保守性向上に注力しました。
 # その他の情報
-Django アプリケーションはポート 80 で実行されるように設定されています。
-MySQL はポート 3306 で実行されるように設定されています。
+- Django アプリケーションはポート 80 で実行されるように設定されています。
+- MySQL はポート 3306 で実行されるように設定されています。
+- ログイン情報は以下です
+  user: root
+  pass: password
