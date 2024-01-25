@@ -256,14 +256,29 @@ class SalesAggregateView(LoginRequiredMixin, View):
         # 日本時間に変換
         current_time_jp = current_time.astimezone(
             dt_timezone(timedelta(hours=9)))
-        self.end_of_day = datetime(current_time_jp.year, current_time_jp.month,
-                                   current_time_jp.day, 23, 59, 59, 0, tzinfo=dt_timezone(timedelta(hours=9)))
+        self.end_of_day = current_time_jp.replace(second=59, minute=59, hour=23)
         # 月次集計の開始日（当日を含めた3ヶ月）
+        start_year = current_time_jp.year - 1 if (current_time_jp.month - 2) <= 0 else current_time_jp.year
         self.start_date_monthly = datetime(
-            current_time_jp.year, current_time_jp.month - 2, 1, 0, 0, 0, tzinfo=dt_timezone(timedelta(hours=9)))
+            start_year, (current_time_jp.month - 2) % 12, 1, 0, 0, 0, tzinfo=dt_timezone(timedelta(hours=9)))
         # 日次集計の開始日（当日を含めた3日）
-        self.start_date_daily = datetime(current_time_jp.year, current_time_jp.month,
-                                         current_time_jp.day - 2, 0, 0, 0, tzinfo=dt_timezone(timedelta(hours=9)))
+        # 日数の補正
+        adjusted_day = current_time_jp.day - 2
+        adjusted_month = current_time_jp.month
+        adjusted_year = current_time_jp.year
+
+        while adjusted_day < 1:
+            # 日が1未満の場合は前月の末日を取得し、補正する
+            current_time_jp = (current_time_jp.replace(day=1) - timedelta(days=1)).replace(day=1)
+            adjusted_day += current_time_jp.day
+            adjusted_month = current_time_jp.month
+
+            # 年がまたがる場合の補正
+            if adjusted_month == 12:
+                adjusted_year -= 1
+
+        self.start_date_daily = datetime(
+            adjusted_year, adjusted_month, adjusted_day, 0, 0, 0, tzinfo=dt_timezone(timedelta(hours=9)))
 
     def format_data(
         self, sales_data: List[models.Model], is_monthly: bool = True
